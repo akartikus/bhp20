@@ -3,7 +3,14 @@ import { View, Text } from 'react-native';
 
 const HiddenWord = ({ word, givenLetter }) => {
   return (
-    <View style={{ flex: 1, flexDirection: 'row' }}>
+    <View
+      style={{
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       {word.map((e, index) =>
         e.isUsed === true ? (
           <Text key={index}>{e.key}</Text>

@@ -23,7 +23,7 @@ const LetterButton = ({ letter, onPress, deactivate }) => {
   }
 
   return (
-    <TouchableOpacity onPress={onPress} style={getStyle(color).button}>
+    <TouchableOpacity onPress={handler} style={getStyle(color).button}>
       <Text>{letter}</Text>
     </TouchableOpacity>
   );
