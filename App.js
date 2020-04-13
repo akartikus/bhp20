@@ -4,11 +4,8 @@ import HiddenWord from './components/hiddenWord';
 import LettersBoard from './components/lettersBoard';
 import MessagePanel from './components/messagePanel';
 import { getWords } from './services/fakeWordsService';
-import { wordToMap } from './utils/wordUtils';
+import { wordToMap, NUM_TRY, ALPHABET } from './utils/wordUtils';
 import _ from 'lodash';
-
-const ALPHABET = 'abcdefghijklmnopqrstuvwxyz';
-const NUM_TRY = 3;
 
 class App extends Component {
   state = {
@@ -20,17 +17,19 @@ class App extends Component {
     score: 0,
     words: [],
   };
+
+  componentDidMount() {
+    console.log(getWords(1));
+    this.setState({ words: getWords(1) });
+    this.getRandomWord(getWords(1));
+  }
+
   getRandomWord = (wordList) => {
     const hiddenWord = _.sample(wordList); //TODO: Filter unused word only
     const indication = hiddenWord.indication;
     this.setState({ hiddenWord: wordToMap(hiddenWord.value) });
     this.setState({ indication });
   };
-
-  componentDidMount() {
-    this.setState({ words: getWords() });
-    this.getRandomWord(getWords());
-  }
 
   isWordFound = (word) => {
     return word.map((e) => e.isUsed).reduce((acc, v) => acc && v, true);
@@ -57,12 +56,8 @@ class App extends Component {
     this.initializeGame(0);
   };
 
-  handleLetterPress = (letter) => {
-    const { hiddenWord, letters, leftTry } = this.state;
+  updatedHiddenWord = (hiddenWord, letter) => {
     let isPresent = false;
-    let left = leftTry;
-
-    //TODO: refactor : use hiddenWord object
     const updatedHiddenWord = [...hiddenWord];
     updatedHiddenWord.map((e, index) => {
       if (e.value == letter.value) {
@@ -72,8 +67,11 @@ class App extends Component {
       }
     });
     this.setState({ hiddenWord: updatedHiddenWord });
+    return { isPresent, hiddenWord: updatedHiddenWord };
+  };
 
-    const updatedLetters = [...letters];
+  updatedLetters = (letter) => {
+    const updatedLetters = [...this.state.letters];
     updatedLetters.map((e, index) => {
       if (e.value == letter.value) {
         updatedLetters[index] = { ...updatedLetters[index] };
@@ -81,8 +79,17 @@ class App extends Component {
       }
     });
     this.setState({ letters: updatedLetters });
+  };
 
-    if (!isPresent) {
+  handleLetterPress = (letter) => {
+    const { hiddenWord, leftTry } = this.state;
+    let left = leftTry;
+
+    let updatedHiddenWord = this.updatedHiddenWord(hiddenWord, letter);
+
+    this.updatedLetters(letter);
+
+    if (!updatedHiddenWord.isPresent) {
       left = left - 1;
       this.setState({ leftTry: left });
       if (left === 0) {
@@ -99,7 +106,7 @@ class App extends Component {
       }
     }
 
-    if (this.isWordFound(updatedHiddenWord)) {
+    if (this.isWordFound(updatedHiddenWord.hiddenWord)) {
       this.setState({
         message: (
           <MessagePanel
@@ -147,7 +154,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#acd1e3',
-    //alignItems: 'center',
-    //justifyContent: 'center',
   },
 });
