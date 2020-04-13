@@ -3,32 +3,42 @@ import { StyleSheet, Text, View } from 'react-native';
 import HiddenWord from './components/hiddenWord';
 import LettersBoard from './components/lettersBoard';
 import MessagePanel from './components/messagePanel';
+import { getWords } from './services/fakeWordsService';
+import { wordToMap } from './utils/wordUtils';
+import _ from 'lodash';
 
 const ALPHABET = 'abcdefghijklmnopqrstuvwxyz';
 const NUM_TRY = 3;
 
 class App extends Component {
-  wordToMap = (word) => {
-    return Array.from(word.toUpperCase()).map((e) => {
-      return { key: e, isUsed: false };
-    });
-  };
-
   state = {
-    hiddenWord: this.wordToMap('Jesus'),
-    letters: this.wordToMap(ALPHABET),
+    hiddenWord: [],
+    indication: '',
+    letters: wordToMap(ALPHABET),
     leftTry: NUM_TRY,
     message: null,
     score: 0,
+    words: [],
   };
+  getRandomWord = (wordList) => {
+    const hiddenWord = _.sample(wordList); //TODO: Filter unused word only
+    const indication = hiddenWord.indication;
+    this.setState({ hiddenWord: wordToMap(hiddenWord.value) });
+    this.setState({ indication });
+  };
+
+  componentDidMount() {
+    this.setState({ words: getWords() });
+    this.getRandomWord(getWords());
+  }
 
   isWordFound = (word) => {
     return word.map((e) => e.isUsed).reduce((acc, v) => acc && v, true);
   };
 
   initializeGame = (score) => {
-    this.setState({ letters: this.wordToMap(ALPHABET) });
-    this.setState({ hiddenWord: this.wordToMap('Jesus') });
+    this.setState({ letters: wordToMap(ALPHABET) });
+    this.getRandomWord(this.state.words);
     this.setState({ leftTry: NUM_TRY });
     this.setState({ message: null });
     this.setState({ score: score });
@@ -36,6 +46,11 @@ class App extends Component {
 
   nextWord = () => {
     this.initializeGame(this.state.score + this.state.leftTry);
+    this.getRandomWord(this.state.words);
+  };
+
+  tagUsedWord = (word) => {
+    //TODO: manipulate hidden word object
   };
 
   backToMenu = () => {
@@ -47,9 +62,10 @@ class App extends Component {
     let isPresent = false;
     let left = leftTry;
 
+    //TODO: refactor : use hiddenWord object
     const updatedHiddenWord = [...hiddenWord];
     updatedHiddenWord.map((e, index) => {
-      if (e.key == letter.key) {
+      if (e.value == letter.value) {
         isPresent = true;
         updatedHiddenWord[index] = { ...updatedHiddenWord[index] };
         updatedHiddenWord[index].isUsed = !updatedHiddenWord[index].isUsed;
@@ -59,7 +75,7 @@ class App extends Component {
 
     const updatedLetters = [...letters];
     updatedLetters.map((e, index) => {
-      if (e.key == letter.key) {
+      if (e.value == letter.value) {
         updatedLetters[index] = { ...updatedLetters[index] };
         updatedLetters[index].isUsed = !updatedLetters[index].isUsed;
       }
@@ -68,6 +84,7 @@ class App extends Component {
 
     if (!isPresent) {
       left = left - 1;
+      this.setState({ leftTry: left });
       if (left === 0) {
         this.setState({
           message: (
@@ -80,7 +97,6 @@ class App extends Component {
         });
         return;
       }
-      this.setState({ leftTry: left });
     }
 
     if (this.isWordFound(updatedHiddenWord)) {
@@ -89,6 +105,7 @@ class App extends Component {
           <MessagePanel
             message="Bravo! Vous avez trouvé le mot. "
             onNext={this.nextWord}
+            onCancel={this.backToMenu}
           />
         ),
       });
@@ -96,24 +113,27 @@ class App extends Component {
   };
 
   render() {
+    const {
+      indication,
+      hiddenWord,
+      letters,
+      score,
+      message,
+      leftTry,
+    } = this.state;
     return (
       <View style={styles.container}>
-        <Text style={{ flex: 1, textAlign: 'right' }}>
-          Score : {this.state.score}{' '}
-        </Text>
+        <Text style={{ flex: 1, textAlign: 'right' }}>Score : {score} </Text>
+        <Text style={{ flex: 1, textAlign: 'center' }}>{indication}</Text>
+        {message}
         <Text style={{ flex: 1, textAlign: 'center' }}>
-          Je suis le Chemin, la Vérité et la Vie!
-        </Text>
-        {this.state.message && this.state.message}
-
-        <Text style={{ flex: 1, textAlign: 'center' }}>
-          Faux pas restants : {this.state.leftTry}{' '}
+          Faux pas restants : {leftTry}{' '}
         </Text>
 
-        <HiddenWord style={{ flex: 1 }} word={this.state.hiddenWord} />
+        <HiddenWord style={{ flex: 1 }} word={hiddenWord} />
         <LettersBoard
           style={{ flex: 2 }}
-          letters={this.state.letters}
+          letters={letters}
           onPress={this.handleLetterPress}
         />
       </View>

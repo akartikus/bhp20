@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-const HiddenWord = ({ word, givenLetter }) => {
+const HiddenWord = ({ word }) => {
   return (
     <View
       style={{
@@ -13,7 +13,7 @@ const HiddenWord = ({ word, givenLetter }) => {
     >
       {word.map((e, index) =>
         e.isUsed === true ? (
-          <Text key={index}>{e.key}</Text>
+          <Text key={index}>{e.value}</Text>
         ) : (
           <Text key={index}>?</Text>
         )

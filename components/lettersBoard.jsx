@@ -3,8 +3,6 @@ import { View, Button, Text, StyleSheet } from 'react-native';
 import LetterButton from './letterButton';
 
 const LettersBoard = ({ letters, onPress }) => {
-  //console.log('Alphabet ', letters);
-
   return (
     <View
       style={{
@@ -18,8 +16,8 @@ const LettersBoard = ({ letters, onPress }) => {
           <LetterButton
             onPress={() => onPress(e)}
             deactivate={e.isUsed}
-            key={e.key}
-            letter={e.key}
+            key={e.value}
+            letter={e.value}
           />
         );
       })}
