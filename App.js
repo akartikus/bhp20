@@ -7,6 +7,9 @@ import { getWords } from './services/fakeWordsService';
 import { wordToMap, NUM_TRY, ALPHABET } from './utils/wordUtils';
 import _ from 'lodash';
 
+const WORDS_PER_LEVEL = 2;
+const MAX_LEVEL = 2;
+
 class App extends Component {
   state = {
     hiddenWord: [],
@@ -16,12 +19,13 @@ class App extends Component {
     message: null,
     score: 0,
     words: [],
+    level: 1,
+    wordsFound: 0,
   };
 
   componentDidMount() {
-    console.log(getWords(1));
-    this.setState({ words: getWords(1) });
-    this.getRandomWord(getWords(1));
+    this.setState({ words: getWords(this.state.level) });
+    this.getRandomWord(getWords(this.state.level));
   }
 
   getRandomWord = (wordList) => {
@@ -107,10 +111,27 @@ class App extends Component {
     }
 
     if (this.isWordFound(updatedHiddenWord.hiddenWord)) {
+      const { wordsFound, level } = this.state;
+
+      let wordsFoundUpdated = wordsFound + 1;
+      let message = 'Bravo! Vous avez trouvé le mot.';
+
+      if (wordsFoundUpdated === WORDS_PER_LEVEL && level > 0) {
+        wordsFoundUpdated = 0;
+
+        const levelUpdated = level === MAX_LEVEL ? 0 : level + 1;
+        //TODO: Refactor updating words
+        this.setState({ words: getWords(levelUpdated) });
+        this.setState({ level: levelUpdated });
+        message = message + ' Vous passez au niveau suivant.';
+      }
+
+      this.setState({ wordsFound: wordsFoundUpdated });
+
       this.setState({
         message: (
           <MessagePanel
-            message="Bravo! Vous avez trouvé le mot. "
+            message={message}
             onNext={this.nextWord}
             onCancel={this.backToMenu}
           />
@@ -127,10 +148,12 @@ class App extends Component {
       score,
       message,
       leftTry,
+      level,
     } = this.state;
     return (
       <View style={styles.container}>
         <Text style={{ flex: 1, textAlign: 'right' }}>Score : {score} </Text>
+        <Text style={{ flex: 1, textAlign: 'left' }}>Niveau => {level} </Text>
         <Text style={{ flex: 1, textAlign: 'center' }}>{indication}</Text>
         {message}
         <Text style={{ flex: 1, textAlign: 'center' }}>

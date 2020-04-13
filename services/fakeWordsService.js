@@ -44,5 +44,5 @@ const words = [
 ];
 
 export const getWords = (level) => {
-  return words.filter((e) => e.level === level);
+  return level > 0 ? words.filter((e) => e.level === level) : words;
 };
