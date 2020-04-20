@@ -6,3 +6,7 @@ export const wordToMap = (word) => {
     return { value: e, isUsed: false };
   });
 };
+
+export const isWordFound = (word) => {
+  return word.map((e) => e.isUsed).reduce((acc, v) => acc && v, true);
+};
