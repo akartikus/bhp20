@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 import HiddenWord from './hiddenWord';
 import { View, Text, useColorScheme } from 'react-native';
 import { getWords } from '../services/fakeWordsService';
@@ -76,11 +77,12 @@ class WordManager extends Component {
       left = left - 1;
       this.setState({ leftTry: left });
       if (left === 0) {
-        this.props.onNotFound();
+        this.props.onNotFound(updatedHiddenWord.hiddenWord);
         this.setState({ isNewWord: true });
       }
     } else if (isWordFound(updatedHiddenWord.hiddenWord.word)) {
-      this.props.onFound(left);
+      //TODO: Update word status to found/used
+      this.props.onFound(left, updatedHiddenWord.hiddenWord);
       this.setState({ isNewWord: true });
     }
   };
@@ -94,16 +96,14 @@ class WordManager extends Component {
     const { hiddenWord, letters, leftTry } = this.state;
     return (
       <View>
-        <Text>{hiddenWord != null && hiddenWord.indication}</Text>
-        <Text style={{ flex: 1, textAlign: 'center' }}>
+        <Text style={{ textAlign: 'center' }}>
+          Indice : {hiddenWord != null && hiddenWord.indication}
+        </Text>
+        <Text style={{ textAlign: 'center' }}>
           Faux pas restants : {leftTry}{' '}
         </Text>
         <HiddenWord word={word}></HiddenWord>
-        <LettersBoard
-          style={{ flex: 2 }}
-          letters={letters}
-          onPress={this.handleLetterPress}
-        />
+        <LettersBoard letters={letters} onPress={this.handleLetterPress} />
       </View>
     );
   }
