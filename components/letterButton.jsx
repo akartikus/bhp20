@@ -4,11 +4,15 @@ import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 const getStyle = (color) => {
   return StyleSheet.create({
     button: {
-      height: 25,
-      width: 25,
+      height: 30,
+      width: 30,
       margin: 5,
+      padding: 2,
+      borderRadius: 5,
       alignItems: 'center',
       backgroundColor: color,
+      borderColor: '#1a4d27',
+      borderWidth: 1,
     },
   });
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 const HiddenWord = ({ word }) => {
   return (
@@ -9,13 +9,18 @@ const HiddenWord = ({ word }) => {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        marginVertical: 10,
       }}
     >
       {word.map((e, index) =>
         e.isUsed === true ? (
-          <Text key={index}>{e.value}</Text>
+          <View style={styles.letterView} key={index}>
+            <Text style={styles.letter}>{e.value}</Text>
+          </View>
         ) : (
-          <Text key={index}>?</Text>
+          <View style={styles.letterView} key={index}>
+            <Text style={styles.letter}>?</Text>
+          </View>
         )
       )}
     </View>
@@ -23,3 +28,18 @@ const HiddenWord = ({ word }) => {
 };
 
 export default HiddenWord;
+
+const styles = StyleSheet.create({
+  letter: {
+    textAlign: 'center',
+    color: '#000',
+    padding: 10,
+    fontSize: 20,
+  },
+  letterView: {
+    borderColor: '#404d52',
+    borderWidth: 1,
+    borderRadius: 25,
+    marginHorizontal: 3,
+  },
+});

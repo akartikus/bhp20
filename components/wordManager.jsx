@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import HiddenWord from './hiddenWord';
-import { View, Text, useColorScheme } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground } from 'react-native';
 import { getWords } from '../services/fakeWordsService';
 import { wordToMap, NUM_TRY, ALPHABET, isWordFound } from '../utils/wordUtils';
 import LettersBoard from './lettersBoard';
+import { Icon, Rating } from 'react-native-elements';
 
 class WordManager extends Component {
   state = {
@@ -13,6 +14,8 @@ class WordManager extends Component {
     letters: [],
     leftTry: NUM_TRY,
     isNewWord: false,
+    diseableRefresh: true,
+    activateLettersBoard: true,
   };
 
   componentDidMount() {
@@ -40,6 +43,7 @@ class WordManager extends Component {
     this.setState({ isNewWord: false });
     this.setState({ letters: wordToMap(ALPHABET) });
     this.setState({ leftTry: NUM_TRY });
+    this.setState({ activateLettersBoard: true });
   };
 
   updatedHiddenWord = (letter) => {
@@ -78,12 +82,14 @@ class WordManager extends Component {
       this.setState({ leftTry: left });
       if (left === 0) {
         this.props.onNotFound(updatedHiddenWord.hiddenWord);
-        this.setState({ isNewWord: true });
+        this.setState({ activateLettersBoard: false });
+        this.setState({ diseableRefresh: false });
       }
     } else if (isWordFound(updatedHiddenWord.hiddenWord.word)) {
       //TODO: Update word status to found/used
       this.props.onFound(left, updatedHiddenWord.hiddenWord);
-      this.setState({ isNewWord: true });
+      this.setState({ activateLettersBoard: false });
+      this.setState({ diseableRefresh: false });
     }
   };
 
@@ -91,22 +97,98 @@ class WordManager extends Component {
     return this.state.hiddenWord != null ? this.state.hiddenWord.word : [];
   };
 
+  refreshWord = () => {
+    this.setState({ isNewWord: true });
+    this.setState({ diseableRefresh: true });
+  };
+
   render() {
     const word = this.getWord();
-    const { hiddenWord, letters, leftTry } = this.state;
+    //const notebook = ;
+    const {
+      hiddenWord,
+      letters,
+      leftTry,
+      activateLettersBoard,
+      diseableRefresh,
+    } = this.state;
+
     return (
-      <View>
-        <Text style={{ textAlign: 'center' }}>
-          Indice : {hiddenWord != null && hiddenWord.indication}
-        </Text>
-        <Text style={{ textAlign: 'center' }}>
-          Faux pas restants : {leftTry}{' '}
-        </Text>
+      <View style={styles.container}>
+        <View style={styles.lifeView}>
+          <Icon
+            name="refresh"
+            disabled={diseableRefresh}
+            title="Refresh"
+            onPress={this.refreshWord}
+            style={{ alignSelf: 'flex-end' }}
+          ></Icon>
+          <Rating
+            type="heart"
+            ratingColor="blue"
+            ratingCount={NUM_TRY}
+            startingValue={leftTry}
+            imageSize={30}
+            readonly
+            style={{ alignSelf: 'center' }}
+          />
+        </View>
+        <View style={styles.indicationView}>
+          <ImageBackground
+            source={require('../img/notebook.png')}
+            resizeMode={'stretch'}
+            style={styles.image}
+          >
+            <Icon name="light-bulb" type="octicon" color="#517fa4"></Icon>
+            <Text
+              style={{
+                textAlign: 'center',
+                color: '#517fa4',
+              }}
+            >
+              {hiddenWord != null && hiddenWord.indication}
+            </Text>
+          </ImageBackground>
+        </View>
         <HiddenWord word={word}></HiddenWord>
-        <LettersBoard letters={letters} onPress={this.handleLetterPress} />
+        <LettersBoard
+          active={activateLettersBoard}
+          letters={letters}
+          onPress={this.handleLetterPress}
+        />
       </View>
     );
   }
 }
 
 export default WordManager;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'space-around',
+  },
+
+  lifeView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 5,
+  },
+  image: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+  },
+  indicationView: {
+    flex: 2,
+    //borderColor: '#404d52',
+    //borderWidth: 1,
+    //borderRadius: 10,
+    //backgroundColor: '#ddebdd',
+    marginHorizontal: 20,
+    //shadowColor: '#000',
+    //shadowOffset: { width: 0, height: 2 },
+    //shadowOpacity: 0.8,
+    //shadowRadius: 2,
+  },
+});
