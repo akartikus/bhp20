@@ -23,7 +23,10 @@ class WordManager extends Component {
   }
 
   componentDidUpdate(oldProps) {
-    if (oldProps.level != this.props.level) {
+    if (
+      oldProps.level != this.props.level ||
+      oldProps.group != this.props.group
+    ) {
       this.initialize();
     } else if (this.state.isNewWord) {
       this.initialize();
@@ -31,7 +34,16 @@ class WordManager extends Component {
   }
 
   initialize = () => {
-    const wordList = getWords(this.props.level).filter((e) => !e.isUsed);
+    console.log(
+      'level ',
+      this.props.level,
+      ' group ',
+      this.props.group,
+      getWords(this.props.level, this.props.group)
+    );
+    const wordList = getWords(this.props.level, this.props.group).filter(
+      (e) => !e.isUsed
+    );
     const hiddenWord = _.sample(wordList);
     const index = wordList.indexOf(hiddenWord);
     wordList[index] = { ...wordList[index] };

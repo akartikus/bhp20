@@ -1,14 +1,18 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
   View,
   Modal,
   TouchableHighlight,
+  Button,
 } from 'react-native';
 import _ from 'lodash';
 import WordManager from './components/wordManager';
 import { Avatar, Header } from 'react-native-elements';
+import AdventureListModal from './components/adventureListModal';
+import MenuModal from './components/menuModal';
+import { Icon } from 'react-native-elements';
 
 const WORDS_PER_LEVEL = 2;
 const MAX_LEVEL = 2;
@@ -19,8 +23,11 @@ class App extends Component {
     score: 0,
     oldScore: 0,
     level: 1,
+    group: 0,
     wordsFound: 0,
     modalVisible: false,
+    adventureListVisible: false,
+    menuVisible: false,
   };
 
   componentDidMount() {}
@@ -46,7 +53,6 @@ class App extends Component {
   };
 
   onNotFound = (word) => {
-    console.log(word);
     const message = "Dommage :( , c'était " + word.value + ' dans: ' + word.ref;
     this.setState({ message });
     this.setModalVisible(true);
@@ -64,8 +70,27 @@ class App extends Component {
     this.setState({ modalVisible: visible });
   };
 
+  handleCategoryPress = (e) => {
+    this.setState({ adventureListVisible: false });
+    this.setState({ group: e.id });
+  };
+
+  handleMenuClose = () => {
+    this.setState({ menuVisible: false });
+  };
+  handleMenuOpen = () => {
+    this.setState({ menuVisible: true });
+  };
+
   render() {
-    const { score, message, level, modalVisible } = this.state;
+    const {
+      score,
+      message,
+      level,
+      modalVisible,
+      adventureListVisible,
+      menuVisible,
+    } = this.state;
     return (
       <View style={styles.container}>
         <Modal animationType="slide" transparent={true} visible={modalVisible}>
@@ -83,6 +108,14 @@ class App extends Component {
             </View>
           </View>
         </Modal>
+        <AdventureListModal
+          visible={adventureListVisible}
+          onItemPress={this.handleCategoryPress}
+        ></AdventureListModal>
+        <MenuModal
+          visible={menuVisible}
+          onClose={this.handleMenuClose}
+        ></MenuModal>
         <Header
           placement="left"
           leftComponent={
@@ -96,20 +129,29 @@ class App extends Component {
                 overlayContainerStyle={{ backgroundColor: '#549ca8' }}
               ></Avatar>
               <Text style={{ textAlign: 'right', color: '#fff' }}>
-                User name{' '}
+                User name
               </Text>
             </View>
           }
           centerComponent={
-            <Text style={{ fontSize: 20, color: '#fff' }}>
-              Score : {score}{' '}
-            </Text>
+            <Text style={{ fontSize: 20, color: '#fff' }}>Score : {score}</Text>
           }
-          rightComponent={{ icon: 'menu', color: '#fff' }}
+          rightComponent={
+            <Icon
+              name="ios-menu"
+              type="ionicon"
+              color="#fff"
+              onPress={this.handleMenuOpen}
+            ></Icon>
+          }
         />
 
         <View style={styles.header}></View>
         <View style={styles.levelPanel}>
+          <Button
+            title="Choisir niveau/adventure"
+            onPress={() => this.setState({ adventureListVisible: true })}
+          ></Button>
           <Text style={{ textAlign: 'left' }}>Niveau => {level} </Text>
           <Text style={{ textAlign: 'left' }}>o----o----o----o----| </Text>
         </View>
@@ -117,6 +159,7 @@ class App extends Component {
           <WordManager
             style={styles.wordManager}
             level={this.state.level}
+            group={this.state.group}
             onFound={this.onFound}
             onNotFound={this.onNotFound}
           ></WordManager>
