@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
-import { Modal, View, StyleSheet } from 'react-native';
+import {
+  Modal,
+  View,
+  StyleSheet,
+  TouchableHighlight,
+  Text,
+} from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { getGroups } from '../services/fakeWordsService';
+import { Separator } from './separator';
+import { Styles } from '../styles/styles';
 
 class AdventureListModal extends Component {
   state = {
@@ -14,7 +22,7 @@ class AdventureListModal extends Component {
         transparent={true}
         visible={this.props.visible}
       >
-        <View style={styles.modalView}>
+        <View style={Styles.modalView}>
           <View>
             {this.state.categories.map((e, index) => (
               <ListItem
@@ -25,6 +33,15 @@ class AdventureListModal extends Component {
               ></ListItem>
             ))}
           </View>
+
+          <View style={Styles.modalFooter}>
+            <TouchableHighlight
+              style={Styles.warningButton}
+              onPress={this.props.onCancel}
+            >
+              <Text style={Styles.buttonText}>Annuler</Text>
+            </TouchableHighlight>
+          </View>
         </View>
       </Modal>
     );
@@ -32,19 +49,3 @@ class AdventureListModal extends Component {
 }
 
 export default AdventureListModal;
-const styles = StyleSheet.create({
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-});

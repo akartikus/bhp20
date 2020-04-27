@@ -1,21 +1,17 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Modal,
-  TouchableHighlight,
-  Button,
-} from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
 import _ from 'lodash';
 import WordManager from './components/wordManager';
 import { Avatar, Header } from 'react-native-elements';
 import AdventureListModal from './components/adventureListModal';
 import MenuModal from './components/menuModal';
 import { Icon } from 'react-native-elements';
+import MessageModal from './components/messageModal';
+import { Colors } from './styles/color';
+import Score from './components/score';
+import GameMode from './components/gameMode';
 
 const WORDS_PER_LEVEL = 2;
-const MAX_LEVEL = 2;
 
 class App extends Component {
   state = {
@@ -29,8 +25,6 @@ class App extends Component {
     adventureListVisible: false,
     menuVisible: false,
   };
-
-  componentDidMount() {}
 
   initializeGame = (score) => {
     this.setState({ message: null });
@@ -70,11 +64,16 @@ class App extends Component {
     this.setState({ modalVisible: visible });
   };
 
+  //Category handlers
   handleCategoryPress = (e) => {
     this.setState({ adventureListVisible: false });
     this.setState({ group: e.id });
   };
+  handleCancel = () => {
+    this.setState({ adventureListVisible: false });
+  };
 
+  //Menu handlers
   handleMenuClose = () => {
     this.setState({ menuVisible: false });
   };
@@ -93,24 +92,21 @@ class App extends Component {
     } = this.state;
     return (
       <View style={styles.container}>
-        <Modal animationType="slide" transparent={true} visible={modalVisible}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>{message}</Text>
-              <TouchableHighlight
-                style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
-                onPress={() => {
-                  this.setModalVisible(!modalVisible);
-                }}
-              >
-                <Text style={styles.textStyle}>Fermer</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </Modal>
+        <MessageModal
+          incon="information-circle-outline"
+          headerTitle="Mon titre"
+          title="Bravo"
+          message={message}
+          visible={modalVisible}
+          buttonOk="Ok"
+          onOk={() => {
+            this.setModalVisible(!modalVisible);
+          }}
+        ></MessageModal>
         <AdventureListModal
           visible={adventureListVisible}
           onItemPress={this.handleCategoryPress}
+          onCancel={this.handleCancel}
         ></AdventureListModal>
         <MenuModal
           visible={menuVisible}
@@ -133,14 +129,12 @@ class App extends Component {
               </Text>
             </View>
           }
-          centerComponent={
-            <Text style={{ fontSize: 20, color: '#fff' }}>Score : {score}</Text>
-          }
+          centerComponent={<Score score={score} />}
           rightComponent={
             <Icon
               name="ios-menu"
               type="ionicon"
-              color="#fff"
+              color={Colors.titleColor1}
               onPress={this.handleMenuOpen}
             ></Icon>
           }
@@ -152,8 +146,7 @@ class App extends Component {
             title="Choisir niveau/adventure"
             onPress={() => this.setState({ adventureListVisible: true })}
           ></Button>
-          <Text style={{ textAlign: 'left' }}>Niveau => {level} </Text>
-          <Text style={{ textAlign: 'left' }}>o----o----o----o----| </Text>
+          <GameMode level={level}></GameMode>
         </View>
         <View style={styles.wordManager}>
           <WordManager
@@ -177,14 +170,13 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.backgroundColor,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#acdeee',
+    backgroundColor: Colors.headerColor,
   },
-
   userView: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -193,8 +185,9 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: '#222b2e',
+    backgroundColor: Colors.footerColor,
   },
+  //Todo: Need refactor
   levelPanel: {
     flex: 2,
     flexDirection: 'column',
@@ -204,39 +197,7 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     borderBottomWidth: 1,
   },
-
   wordManager: {
     flex: 6,
-  },
-
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  openButton: {
-    backgroundColor: '#F194FF',
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
   },
 });

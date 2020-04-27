@@ -1,0 +1,17 @@
+export const Colors = {
+  backgroundColor: 'white',
+  textColor1: '#46788f',
+  textColor2: '#1e3742',
+  textColor3: '#212836',
+  textColor4: '#000000',
+  titleColor1: 'white',
+  titleColor2: 'white',
+  titleColor3: 'white',
+  titleColor4: 'white',
+  buttonColorInfo1: '#46788f',
+  buttonColorInfo2: '#1e3742',
+  buttonColorWarning1: '#e8d282',
+  buttonColorWarning2: '#db5f4f',
+  headerColor: '#acdeee',
+  footerColor: '#222b2e',
+};
