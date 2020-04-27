@@ -106,6 +106,8 @@ const words = [
 ];
 
 const groups = [
+  { id: 0, label: 'Normal 1', isEnable: true, level: 1 },
+  { id: 0, label: 'Normal 2', isEnable: true, level: 2 },
   { id: 1, label: 'Adventure 1', isEnable: true },
   { id: 2, label: 'Adventure 2', isEnable: true },
   { id: 3, label: 'Adventure 3', isEnable: false },
@@ -114,8 +116,14 @@ const groups = [
 export const getWords = (level, group) => {
   if (group === 0)
     return level > 0 ? words.filter((e) => e.level === level) : words;
-  else return words.filter((e) => /*e.level === level && */ e.group === group);
+  else return words.filter((e) => e.group === group); //Todo: Add level filter
 };
 export const getGroups = () => {
   return groups;
+};
+
+export const getGroupName = (id) => {
+  return groups.find((e) => {
+    return e.id === id;
+  });
 };

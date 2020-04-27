@@ -23,24 +23,20 @@ class WordManager extends Component {
   }
 
   componentDidUpdate(oldProps) {
-    if (
-      oldProps.level != this.props.level ||
-      oldProps.group != this.props.group
-    ) {
-      this.initialize();
-    } else if (this.state.isNewWord) {
-      this.initialize();
+    if (this.props.disabled) {
+    } else {
+      if (
+        oldProps.level != this.props.level ||
+        oldProps.group != this.props.group
+      ) {
+        this.initialize();
+      } else if (this.state.isNewWord) {
+        this.initialize();
+      }
     }
   }
 
   initialize = () => {
-    console.log(
-      'level ',
-      this.props.level,
-      ' group ',
-      this.props.group,
-      getWords(this.props.level, this.props.group)
-    );
     const wordList = getWords(this.props.level, this.props.group).filter(
       (e) => !e.isUsed
     );
@@ -124,7 +120,14 @@ class WordManager extends Component {
       activateLettersBoard,
       diseableRefresh,
     } = this.state;
+    console.log('Word manager state ', this.props.disabled);
 
+    if (this.props.disabled)
+      return (
+        <View style={styles.container}>
+          <Text>Aucun mode de jeu choisi!!</Text>
+        </View>
+      );
     return (
       <View style={styles.container}>
         <View style={styles.lifeView}>
@@ -193,14 +196,6 @@ const styles = StyleSheet.create({
   },
   indicationView: {
     flex: 2,
-    //borderColor: '#404d52',
-    //borderWidth: 1,
-    //borderRadius: 10,
-    //backgroundColor: '#ddebdd',
     marginHorizontal: 20,
-    //shadowColor: '#000',
-    //shadowOffset: { width: 0, height: 2 },
-    //shadowOpacity: 0.8,
-    //shadowRadius: 2,
   },
 });

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import _ from 'lodash';
 import WordManager from './components/wordManager';
 import { Avatar, Header } from 'react-native-elements';
@@ -12,6 +12,7 @@ import Score from './components/score';
 import GameMode from './components/gameMode';
 
 const WORDS_PER_LEVEL = 2;
+const MAX_LEVEL = 2;
 
 class App extends Component {
   state = {
@@ -24,6 +25,8 @@ class App extends Component {
     modalVisible: false,
     adventureListVisible: false,
     menuVisible: false,
+    allLevelsDone: false,
+    disableWordManager: false,
   };
 
   initializeGame = (score) => {
@@ -35,10 +38,30 @@ class App extends Component {
     const score = this.state.score + left;
     const wordsFound = this.state.wordsFound + 1;
     const message = 'Mot trouvé, vous passez au prochain niveau';
+
     if (wordsFound === WORDS_PER_LEVEL) {
-      this.setState({ level: this.state.level + 1 });
-      this.setState({ wordsFound: 0 });
-      this.setState({ message });
+      if (!this.state.allLevelsDone) {
+        if (this.state.level + 1 > MAX_LEVEL) {
+          this.setState({ allLevelsDone: true });
+          this.setState({
+            message:
+              'Vous avez fini tout les niveaux, choisissez un autre mode',
+          });
+          //TODO: Stop game
+          this.setState({ disableWordManager: true });
+        } else {
+          this.setState({ level: this.state.level + 1 });
+          this.setState({ wordsFound: 0 });
+          this.setState({ message });
+        }
+      }
+      //Free mode
+      else {
+        this.setState({
+          message: "Bravo!! Vous avez fini l'aventure",
+        });
+        //TODO: Mark current mode done
+      }
       this.setModalVisible(true);
     } else {
       this.setState({ wordsFound });
@@ -66,9 +89,16 @@ class App extends Component {
 
   //Category handlers
   handleCategoryPress = (e) => {
-    this.setState({ adventureListVisible: false });
-    this.setState({ group: e.id });
+    if (e) {
+      this.setState({ adventureListVisible: false });
+      this.setState({ group: e.id });
+      if (e.level) {
+        this.setState({ level: e.level });
+      }
+      this.setState({ disableWordManager: false });
+    }
   };
+
   handleCancel = () => {
     this.setState({ adventureListVisible: false });
   };
@@ -80,6 +110,15 @@ class App extends Component {
   handleMenuOpen = () => {
     this.setState({ menuVisible: true });
   };
+  handleModeListPress = () => {
+    if (!this.state.allLevelsDone) {
+      Alert.alert('Oops!!', "Finissez d'abord tout les niveaux", [
+        { text: 'Cancel', style: 'cancel' },
+      ]);
+    } else {
+      this.setState({ adventureListVisible: true });
+    }
+  };
 
   render() {
     const {
@@ -89,6 +128,9 @@ class App extends Component {
       modalVisible,
       adventureListVisible,
       menuVisible,
+      wordsFound,
+      group,
+      disableWordManager,
     } = this.state;
     return (
       <View style={styles.container}>
@@ -144,15 +186,21 @@ class App extends Component {
         <View style={styles.levelPanel}>
           <Button
             title="Choisir niveau/adventure"
-            onPress={() => this.setState({ adventureListVisible: true })}
+            onPress={this.handleModeListPress}
           ></Button>
-          <GameMode level={level}></GameMode>
+          <GameMode
+            level={level}
+            mode={group}
+            progresion={wordsFound}
+            goal={WORDS_PER_LEVEL}
+          ></GameMode>
         </View>
         <View style={styles.wordManager}>
           <WordManager
             style={styles.wordManager}
-            level={this.state.level}
-            group={this.state.group}
+            level={level}
+            group={group}
+            disabled={disableWordManager}
             onFound={this.onFound}
             onNotFound={this.onNotFound}
           ></WordManager>
