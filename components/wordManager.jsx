@@ -6,6 +6,7 @@ import { getWords } from '../services/fakeWordsService';
 import { wordToMap, NUM_TRY, ALPHABET, isWordFound } from '../utils/wordUtils';
 import LettersBoard from './lettersBoard';
 import { Icon, Rating } from 'react-native-elements';
+import { Styles } from '../styles/styles';
 
 class WordManager extends Component {
   state = {
@@ -14,7 +15,6 @@ class WordManager extends Component {
     letters: [],
     leftTry: NUM_TRY,
     isNewWord: false,
-    diseableRefresh: true,
     activateLettersBoard: true,
   };
 
@@ -95,7 +95,9 @@ class WordManager extends Component {
       }
     } else if (isWordFound(updatedHiddenWord.hiddenWord.word)) {
       //TODO: Update word status to found/used
-      this.props.onFound(left, updatedHiddenWord.hiddenWord);
+      this.props.onFound(left, updatedHiddenWord.hiddenWord, () =>
+        this.setState({ isNewWord: true })
+      );
       this.setState({ activateLettersBoard: false });
       this.setState({ diseableRefresh: false });
     }
@@ -105,39 +107,19 @@ class WordManager extends Component {
     return this.state.hiddenWord != null ? this.state.hiddenWord.word : [];
   };
 
-  refreshWord = () => {
-    this.setState({ isNewWord: true });
-    this.setState({ diseableRefresh: true });
-  };
-
   render() {
     const word = this.getWord();
     //const notebook = ;
-    const {
-      hiddenWord,
-      letters,
-      leftTry,
-      activateLettersBoard,
-      diseableRefresh,
-    } = this.state;
-    console.log('Word manager state ', this.props.disabled);
-
+    const { hiddenWord, letters, leftTry, activateLettersBoard } = this.state;
     if (this.props.disabled)
       return (
-        <View style={styles.container}>
+        <View style={Styles.disableView}>
           <Text>Aucun mode de jeu choisi!!</Text>
         </View>
       );
     return (
       <View style={styles.container}>
         <View style={styles.lifeView}>
-          <Icon
-            name="refresh"
-            disabled={diseableRefresh}
-            title="Refresh"
-            onPress={this.refreshWord}
-            style={{ alignSelf: 'flex-end' }}
-          ></Icon>
           <Rating
             type="heart"
             ratingColor="blue"
@@ -154,7 +136,12 @@ class WordManager extends Component {
             resizeMode={'stretch'}
             style={styles.image}
           >
-            <Icon name="light-bulb" type="octicon" color="#517fa4"></Icon>
+            <Icon
+              name="light-bulb"
+              type="octicon"
+              color="#517fa4"
+              onPress={() => this.setState({ isNewWord: true })}
+            ></Icon>
             <Text
               style={{
                 textAlign: 'center',

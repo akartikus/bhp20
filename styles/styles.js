@@ -8,7 +8,6 @@ export const Styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 20,
-
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -18,7 +17,6 @@ export const Styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-
   modalHeader: {
     alignContent: 'center',
     flexDirection: 'row',
@@ -60,5 +58,18 @@ export const Styles = StyleSheet.create({
     borderRadius: 15,
     padding: 10,
     elevation: 2,
+  },
+
+  headerText: {
+    padding: 3,
+    color: Colors.textColor1,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
+  disableView: {
+    backgroundColor: Colors.backgroundDisableColor,
+    flex: 1,
+    justifyContent: 'space-around',
   },
 });

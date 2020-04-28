@@ -1,5 +1,6 @@
 export const Colors = {
   backgroundColor: 'white',
+  backgroundDisableColor: '#e3e3e3',
   textColor1: '#46788f',
   textColor2: '#1e3742',
   textColor3: '#212836',

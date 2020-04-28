@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import _ from 'lodash';
 import WordManager from './components/wordManager';
-import { Avatar, Header } from 'react-native-elements';
+import { Avatar, Header, Icon } from 'react-native-elements';
 import AdventureListModal from './components/adventureListModal';
 import MenuModal from './components/menuModal';
-import { Icon } from 'react-native-elements';
-import MessageModal from './components/messageModal';
 import { Colors } from './styles/color';
 import Score from './components/score';
 import GameMode from './components/gameMode';
@@ -22,7 +20,6 @@ class App extends Component {
     level: 1,
     group: 0,
     wordsFound: 0,
-    modalVisible: false,
     adventureListVisible: false,
     menuVisible: false,
     allLevelsDone: false,
@@ -34,37 +31,72 @@ class App extends Component {
     this.setState({ score: score });
   };
 
-  onFound = (left) => {
+  allLevelsDone = (word) => {
+    this.setState({ allLevelsDone: true }); //TODO: Update db
+    const message =
+      "C'était bien " +
+      word.value +
+      ' dans ' +
+      word.ref +
+      'Vous avez fini tout les niveaux, choisissez un autre mode';
+    Alert.alert('Bravo!!', message, [{ text: 'Suivant', style: 'ok' }]);
+    this.waitModeChoice();
+  };
+
+  goToNextLevel = (word) => {
+    //TODO: Mark level as done db
+    this.setState({ level: this.state.level + 1 });
+    this.setState({ wordsFound: 0 });
+    const message =
+      "C'était bien " +
+      word.value +
+      ' dans ' +
+      word.ref +
+      '. Vous passez au prochaine niveau.';
+    Alert.alert('Bravo!!', message, [{ text: 'Suivant', style: 'ok' }]);
+  };
+
+  adventureDone = (word) => {
+    const message =
+      "C'était bien " +
+      word.value +
+      ' dans ' +
+      word.ref +
+      ". Vous avez fini l'aventure.";
+    Alert.alert('Bravo!!', message, [{ text: 'Suivant', style: 'ok' }]);
+    //TODO: Mark current mode done
+    this.waitModeChoice();
+  };
+
+  readyForNextWord = (wordsFound, word, loadNewWord) => {
+    const message = "C'était bien " + word.value + ' dans ' + word.ref;
+    Alert.alert('Bravo!!', message, [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Suivant', style: 'ok', onPress: loadNewWord },
+    ]);
+    this.setState({ wordsFound });
+  };
+
+  waitModeChoice = () => {
+    this.setState({ disableWordManager: true, wordsFound: WORDS_PER_LEVEL });
+  };
+
+  onFound = (left, word, loadNewWord) => {
     const score = this.state.score + left;
     const wordsFound = this.state.wordsFound + 1;
-    const message = 'Mot trouvé, vous passez au prochain niveau';
 
     if (wordsFound === WORDS_PER_LEVEL) {
       if (!this.state.allLevelsDone) {
         if (this.state.level + 1 > MAX_LEVEL) {
-          this.setState({ allLevelsDone: true });
-          this.setState({
-            message:
-              'Vous avez fini tout les niveaux, choisissez un autre mode',
-          });
-          //TODO: Stop game
-          this.setState({ disableWordManager: true });
+          this.allLevelsDone(word);
         } else {
-          this.setState({ level: this.state.level + 1 });
-          this.setState({ wordsFound: 0 });
-          this.setState({ message });
+          this.goToNextLevel(word);
         }
+      } else {
+        this.adventureDone(word);
       }
-      //Free mode
-      else {
-        this.setState({
-          message: "Bravo!! Vous avez fini l'aventure",
-        });
-        //TODO: Mark current mode done
-      }
-      this.setModalVisible(true);
     } else {
-      this.setState({ wordsFound });
+      this.readyForNextWord(wordsFound, word, loadNewWord);
     }
     this.setState({ score });
   };
@@ -96,6 +128,17 @@ class App extends Component {
         this.setState({ level: e.level });
       }
       this.setState({ disableWordManager: false });
+      this.setState({ wordsFound: 0 });
+    }
+  };
+
+  handleModeListPress = () => {
+    if (!this.state.allLevelsDone) {
+      Alert.alert('Oops!!', "Finissez d'abord tout les niveaux", [
+        { text: 'Cancel', style: 'cancel' },
+      ]);
+    } else {
+      this.setState({ adventureListVisible: true });
     }
   };
 
@@ -110,22 +153,11 @@ class App extends Component {
   handleMenuOpen = () => {
     this.setState({ menuVisible: true });
   };
-  handleModeListPress = () => {
-    if (!this.state.allLevelsDone) {
-      Alert.alert('Oops!!', "Finissez d'abord tout les niveaux", [
-        { text: 'Cancel', style: 'cancel' },
-      ]);
-    } else {
-      this.setState({ adventureListVisible: true });
-    }
-  };
 
   render() {
     const {
       score,
-      message,
       level,
-      modalVisible,
       adventureListVisible,
       menuVisible,
       wordsFound,
@@ -134,17 +166,6 @@ class App extends Component {
     } = this.state;
     return (
       <View style={styles.container}>
-        <MessageModal
-          incon="information-circle-outline"
-          headerTitle="Mon titre"
-          title="Bravo"
-          message={message}
-          visible={modalVisible}
-          buttonOk="Ok"
-          onOk={() => {
-            this.setModalVisible(!modalVisible);
-          }}
-        ></MessageModal>
         <AdventureListModal
           visible={adventureListVisible}
           onItemPress={this.handleCategoryPress}

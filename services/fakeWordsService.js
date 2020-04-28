@@ -106,11 +106,38 @@ const words = [
 ];
 
 const groups = [
-  { id: 0, label: 'Normal 1', isEnable: true, level: 1 },
-  { id: 0, label: 'Normal 2', isEnable: true, level: 2 },
-  { id: 1, label: 'Adventure 1', isEnable: true },
-  { id: 2, label: 'Adventure 2', isEnable: true },
-  { id: 3, label: 'Adventure 3', isEnable: false },
+  {
+    id: 0,
+    label: 'Normal 1',
+    isEnable: true,
+    level: 1,
+    description: 'Mode de jeu normal niveau 1',
+  },
+  {
+    id: 0,
+    label: 'Normal 2',
+    isEnable: true,
+    level: 2,
+    description: 'Mode de jeu normal niveau 2',
+  },
+  {
+    id: 1,
+    label: 'Adventure 1',
+    isEnable: true,
+    description: 'Mode de jeu adventure 1',
+  },
+  {
+    id: 2,
+    label: 'Adventure 2',
+    isEnable: true,
+    description: 'Mode de jeu adventure 2',
+  },
+  {
+    id: 3,
+    label: 'Adventure 3',
+    isEnable: false,
+    description: 'Mode de jeu adventure 3',
+  },
 ];
 
 export const getWords = (level, group) => {
