@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { getGroupName } from '../services/fakeWordsService';
+import { getGroupName } from '../services/dataService';
 
 const GameMode = ({ mode, level, progresion, goal }) => {
   return (

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import HiddenWord from './hiddenWord';
 import { View, Text, StyleSheet, ImageBackground } from 'react-native';
-import { getWords } from '../services/fakeWordsService';
+import { getWords } from '../services/dataService';
 import { wordToMap, NUM_TRY, ALPHABET, isWordFound } from '../utils/wordUtils';
 import LettersBoard from './lettersBoard';
 import { Icon, Rating } from 'react-native-elements';

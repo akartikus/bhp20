@@ -8,7 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import { ListItem, Tooltip } from 'react-native-elements';
-import { getGroups } from '../services/fakeWordsService';
+import { getGroups } from '../services/dataService';
 import { Styles } from '../styles/styles';
 
 class AdventureListModal extends Component {
@@ -17,7 +17,7 @@ class AdventureListModal extends Component {
   };
 
   onItemPress = (e) => {
-    if (e.isEnable) this.props.onItemPress(e);
+    if (!this.props.groupDone.includes(e.id)) this.props.onItemPress(e);
     else
       Alert.alert(
         'Mode fini',
@@ -33,8 +33,8 @@ class AdventureListModal extends Component {
       );
   };
 
-  reactivateMode = (mode) => {
-    //TODO: Update db
+  reactivateMode = (e) => {
+    this.props.reactivateMode(e);
     this.props.onItemPress(e);
   };
 
@@ -53,8 +53,8 @@ class AdventureListModal extends Component {
                 title={
                   <View>
                     <Text style={Styles.headerText}>
-                      {e.label}{' '}
-                      {!e.isEnable && (
+                      {e.label}
+                      {this.props.groupDone.includes(e.id) && (
                         <Text style={{ color: '#41a82f' }}> (Done!)</Text>
                       )}
                     </Text>

@@ -8,6 +8,7 @@ import MenuModal from './components/menuModal';
 import { Colors } from './styles/color';
 import Score from './components/score';
 import GameMode from './components/gameMode';
+import { retrieveData, storeData } from './services/asyncStorageServices';
 
 const WORDS_PER_LEVEL = 2;
 const MAX_LEVEL = 2;
@@ -15,24 +16,60 @@ const MAX_LEVEL = 2;
 class App extends Component {
   state = {
     message: '',
-    score: 0,
     oldScore: 0,
-    level: 1,
-    group: 0,
-    wordsFound: 0,
+    numWordsFound: 0,
     adventureListVisible: false,
     menuVisible: false,
-    allLevelsDone: false,
     disableWordManager: false,
+    //User state
+    level: 1,
+    score: 0,
+    group: 0,
+    allLevelsDone: false,
+    listWordsFound: [],
+    groupDone: [],
+    //User preferences
+    region: 'FR',
   };
 
-  initializeGame = (score) => {
-    this.setState({ message: null });
-    this.setState({ score: score });
+  componentDidMount() {
+    this.initialize();
+  }
+
+  initialize = () => {
+    this.initializeState('level');
+    this.initializeState('score');
+    this.initializeState('group');
+    this.initializeState('allLevelsDone');
+    this.initializeState('message');
+    this.initializeState('numWordsFound');
+    this.initializeState('groupDone');
+
+    this.initializeState('region');
   };
+
+  initializeState = (key) => {
+    retrieveData(key)
+      .then((res) => {
+        const state = { ...this.state };
+        state[key] = res;
+        this.setState(state);
+      })
+      .catch((error) => {
+        console.log('Promise is rejected with error: ' + error);
+      });
+  };
+
+  resetListWordsFound() {
+    const listWordsFound = [];
+    this.setState({ listWordsFound });
+    storeData('listWordsFound', listWordsFound);
+  }
 
   allLevelsDone = (word) => {
-    this.setState({ allLevelsDone: true }); //TODO: Update db
+    this.setState({ allLevelsDone: true });
+    storeData('allLevelsDone', true);
+    this.resetListWordsFound();
     const message =
       "C'était bien " +
       word.value +
@@ -44,9 +81,10 @@ class App extends Component {
   };
 
   goToNextLevel = (word) => {
-    //TODO: Mark level as done db
     this.setState({ level: this.state.level + 1 });
-    this.setState({ wordsFound: 0 });
+    this.resetListWordsFound();
+    storeData('level', this.state.level + 1);
+
     const message =
       "C'était bien " +
       word.value +
@@ -64,28 +102,34 @@ class App extends Component {
       word.ref +
       ". Vous avez fini l'aventure.";
     Alert.alert('Bravo!!', message, [{ text: 'Suivant', style: 'ok' }]);
-    //TODO: Mark current mode done
+
+    this.resetListWordsFound();
+    const groupDone = [...this.state.groupDone, word.group];
+    this.setState({ groupDone });
+    storeData('groupDone', groupDone);
     this.waitModeChoice();
   };
 
-  readyForNextWord = (wordsFound, word, loadNewWord) => {
+  readyForNextWord = (word, loadNewWord) => {
     const message = "C'était bien " + word.value + ' dans ' + word.ref;
     Alert.alert('Bravo!!', message, [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Suivant', style: 'ok', onPress: loadNewWord },
     ]);
-    this.setState({ wordsFound });
   };
 
   waitModeChoice = () => {
-    this.setState({ disableWordManager: true, wordsFound: WORDS_PER_LEVEL });
+    this.setState({ disableWordManager: true });
   };
 
   onFound = (left, word, loadNewWord) => {
     const score = this.state.score + left;
-    const wordsFound = this.state.wordsFound + 1;
+    const listWordsFound = [...this.state.listWordsFound, word.id];
+    this.setState({ listWordsFound });
+    storeData('listWordsFound', listWordsFound);
+    const numWordsFound = listWordsFound.length;
 
-    if (wordsFound === WORDS_PER_LEVEL) {
+    if (numWordsFound === WORDS_PER_LEVEL) {
       if (!this.state.allLevelsDone) {
         if (this.state.level + 1 > MAX_LEVEL) {
           this.allLevelsDone(word);
@@ -96,9 +140,10 @@ class App extends Component {
         this.adventureDone(word);
       }
     } else {
-      this.readyForNextWord(wordsFound, word, loadNewWord);
+      this.readyForNextWord(word, loadNewWord);
     }
     this.setState({ score });
+    storeData('score', score);
   };
 
   onNotFound = (word) => {
@@ -124,12 +169,23 @@ class App extends Component {
     if (e) {
       this.setState({ adventureListVisible: false });
       this.setState({ group: e.id });
+      storeData('adventureListVisible', false);
+      storeData('group', e.id);
+
       if (e.level) {
         this.setState({ level: e.level });
+        storeData('level', e.level);
       }
       this.setState({ disableWordManager: false });
-      this.setState({ wordsFound: 0 });
+      this.setState({ numWordsFound: 0 });
+      storeData('numWordsFound', 0);
     }
+  };
+
+  reactivateMode = (mode) => {
+    const groupDone = [...this.state.groupDone].filter((e) => e != mode.id);
+    this.setState({ groupDone });
+    storeData('groupDone', groupDone);
   };
 
   handleModeListPress = () => {
@@ -160,16 +216,19 @@ class App extends Component {
       level,
       adventureListVisible,
       menuVisible,
-      wordsFound,
+      listWordsFound,
       group,
       disableWordManager,
+      groupDone,
     } = this.state;
     return (
       <View style={styles.container}>
         <AdventureListModal
           visible={adventureListVisible}
+          groupDone={groupDone}
           onItemPress={this.handleCategoryPress}
           onCancel={this.handleCancel}
+          reactivateMode={this.reactivateMode}
         ></AdventureListModal>
         <MenuModal
           visible={menuVisible}
@@ -212,7 +271,7 @@ class App extends Component {
           <GameMode
             level={level}
             mode={group}
-            progresion={wordsFound}
+            progresion={listWordsFound.length}
             goal={WORDS_PER_LEVEL}
           ></GameMode>
         </View>
