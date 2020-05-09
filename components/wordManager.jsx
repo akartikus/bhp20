@@ -37,9 +37,11 @@ class WordManager extends Component {
   }
 
   initialize = () => {
-    const wordList = getWords(this.props.level, this.props.group).filter(
-      (e) => !e.isUsed
-    );
+    const wordList = getWords(
+      this.props.level,
+      this.props.group,
+      this.props.region
+    ).filter((e) => !e.isUsed);
     const hiddenWord = _.sample(wordList);
     const index = wordList.indexOf(hiddenWord);
     wordList[index] = { ...wordList[index] };
@@ -114,7 +116,7 @@ class WordManager extends Component {
     if (this.props.disabled)
       return (
         <View style={Styles.disableView}>
-          <Text>Aucun mode de jeu choisi!!</Text>
+          <Text>⚠️</Text>
         </View>
       );
     return (

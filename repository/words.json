@@ -1,108 +1,112 @@
 {
   "words": [
-    {
-      "value": "Jesus",
-      "ref": "reference",
-      "indication": "Fils de Dieu",
-      "isFound": false,
-      "level": 1,
-      "group": 0
-    },
-    {
-      "value": "Croix",
-      "ref": "reference",
-      "indication": "Où tout a était achevé",
-      "isFound": false,
-      "level": 1,
-      "group": 0
-    },
-    {
-      "value": "Pied",
-      "ref": "reference",
-      "indication": "Immulité",
-      "isFound": false,
-      "level": 1,
-      "group": 0
-    },
-    {
-      "value": "Jesus",
-      "ref": "reference",
-      "indication": "Fils de Dieu, level2",
-      "isFound": false,
-      "level": 2,
-      "group": 0
-    },
-    {
-      "value": "Croix",
-      "ref": "reference",
-      "indication": "Où tout a était achevé, level 2",
-      "isFound": false,
-      "level": 2,
-      "group": 0
-    },
-    {
-      "value": "Pied",
-      "ref": "reference",
-      "indication": "Immulité, level 2",
-      "isFound": false,
-      "level": 2,
-      "group": 0
-    },
-    {
-      "value": "Ad",
-      "ref": "reference",
-      "indication": "Adventure group 1",
-      "isFound": false,
-      "level": 2,
-      "group": 1
-    },
-    {
-      "value": "Ad",
-      "ref": "reference",
-      "indication": "Adventure group 1 azertyuiop",
-      "isFound": false,
-      "level": 2,
-      "group": 1
-    },
-    {
-      "value": "Ad",
-      "ref": "reference",
-      "indication": "Adventure group 1 jzkfhizegfi",
-      "isFound": false,
-      "level": 2,
-      "group": 1
-    },
-    {
-      "value": "Ad",
-      "ref": "reference",
-      "indication": "Adventure group 2 zkfugzeiufze",
-      "isFound": false,
-      "level": 2,
-      "group": 2
-    },
-    {
-      "value": "Ad",
-      "ref": "reference",
-      "indication": "Adventure group 2 ziufizuefzeze",
-      "isFound": false,
-      "level": 2,
-      "group": 2
-    },
-    {
-      "value": "Ad",
-      "ref": "reference",
-      "indication": "Adventure group 3 lkfhzlezrf",
-      "isFound": false,
-      "level": 2,
-      "group": 3
-    },
-    {
-      "value": "Ad",
-      "ref": "reference",
-      "indication": "Adventure group 3 zlfzfz",
-      "isFound": false,
-      "level": 2,
-      "group": 3
-    }
+    [
+      {
+        "value": "Jesus",
+        "ref": "reference",
+        "indication": "Fils de Dieu",
+        "isFound": false,
+        "level": 1,
+        "group": 0
+      },
+      {
+        "value": "Croix",
+        "ref": "reference",
+        "indication": "Où tout a était achevé",
+        "isFound": false,
+        "level": 1,
+        "group": 0
+      },
+      {
+        "value": "Pied",
+        "ref": "reference",
+        "indication": "Immulité",
+        "isFound": false,
+        "level": 1,
+        "group": 0
+      },
+      {
+        "value": "Jesus",
+        "ref": "reference",
+        "indication": "Fils de Dieu, level2",
+        "isFound": false,
+        "level": 2,
+        "group": 0
+      },
+      {
+        "value": "Croix",
+        "ref": "reference",
+        "indication": "Où tout a était achevé, level 2",
+        "isFound": false,
+        "level": 2,
+        "group": 0
+      },
+      {
+        "value": "Pied",
+        "ref": "reference",
+        "indication": "Immulité, level 2",
+        "isFound": false,
+        "level": 2,
+        "group": 0
+      },
+      {
+        "value": "Ad",
+        "ref": "reference",
+        "indication": "Adventure group 1",
+        "isFound": false,
+        "level": 2,
+        "group": 1
+      },
+      {
+        "value": "Ad",
+        "ref": "reference",
+        "indication": "Adventure group 1 azertyuiop",
+        "isFound": false,
+        "level": 2,
+        "group": 1
+      },
+      {
+        "value": "Ad",
+        "ref": "reference",
+        "indication": "Adventure group 1 jzkfhizegfi",
+        "isFound": false,
+        "level": 2,
+        "group": 1
+      },
+      {
+        "value": "Ad",
+        "ref": "reference",
+        "indication": "Adventure group 2 zkfugzeiufze",
+        "isFound": false,
+        "level": 2,
+        "group": 2
+      },
+      {
+        "value": "Ad",
+        "ref": "reference",
+        "indication": "Adventure group 2 ziufizuefzeze",
+        "isFound": false,
+        "level": 2,
+        "group": 2
+      },
+      {
+        "value": "Ad",
+        "ref": "reference",
+        "indication": "Adventure group 3 lkfhzlezrf",
+        "isFound": false,
+        "level": 2,
+        "group": 3
+      },
+      {
+        "value": "Ad",
+        "ref": "reference",
+        "indication": "Adventure group 3 zlfzfz",
+        "isFound": false,
+        "level": 2,
+        "group": 3
+      }
+    ],
+
+    []
   ]
 }

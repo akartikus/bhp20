@@ -9,6 +9,7 @@ import { Colors } from './styles/color';
 import Score from './components/score';
 import GameMode from './components/gameMode';
 import { retrieveData, storeData } from './services/asyncStorageServices';
+import { getI18n } from './services/i18n';
 
 const WORDS_PER_LEVEL = 2;
 const MAX_LEVEL = 2;
@@ -29,12 +30,17 @@ class App extends Component {
     listWordsFound: [],
     groupDone: [],
     //User preferences
-    region: 'FR',
+    region: 'fr',
   };
 
   componentDidMount() {
+    storeData('region', 'fr');
     this.initialize();
   }
+
+  i18n = (key) => {
+    return getI18n(key, this.state.region);
+  };
 
   initialize = () => {
     this.initializeState('level');
@@ -71,12 +77,15 @@ class App extends Component {
     storeData('allLevelsDone', true);
     this.resetListWordsFound();
     const message =
-      "C'était bien " +
+      this.i18n('message_true') +
       word.value +
-      ' dans ' +
+      ' (' +
       word.ref +
-      'Vous avez fini tout les niveaux, choisissez un autre mode';
-    Alert.alert('Bravo!!', message, [{ text: 'Suivant', style: 'ok' }]);
+      ') ' +
+      this.i18n('message_levelDone');
+    Alert.alert(this.i18n('message_congrats'), message, [
+      { text: this.i18n('label_next'), style: 'ok' },
+    ]);
     this.waitModeChoice();
   };
 
@@ -86,23 +95,28 @@ class App extends Component {
     storeData('level', this.state.level + 1);
 
     const message =
-      "C'était bien " +
+      this.i18n('message_true') +
       word.value +
-      ' dans ' +
+      '(' +
       word.ref +
-      '. Vous passez au prochaine niveau.';
-    Alert.alert('Bravo!!', message, [{ text: 'Suivant', style: 'ok' }]);
+      ')' +
+      this.i18n('message_nextLevel');
+    Alert.alert(this.i18n('message_congrats'), message, [
+      { text: this.i18n('label_next'), style: 'ok' },
+    ]);
   };
 
   adventureDone = (word) => {
     const message =
-      "C'était bien " +
+      this.i18n('message_true') +
       word.value +
-      ' dans ' +
+      ' (' +
       word.ref +
-      ". Vous avez fini l'aventure.";
-    Alert.alert('Bravo!!', message, [{ text: 'Suivant', style: 'ok' }]);
-
+      ')' +
+      this.i18n('message_modeDone');
+    Alert.alert(this.i18n('message_congrats'), message, [
+      { text: this.i18n('label_next'), style: 'ok' },
+    ]);
     this.resetListWordsFound();
     const groupDone = [...this.state.groupDone, word.group];
     this.setState({ groupDone });
@@ -111,10 +125,11 @@ class App extends Component {
   };
 
   readyForNextWord = (word, loadNewWord) => {
-    const message = "C'était bien " + word.value + ' dans ' + word.ref;
+    const message =
+      this.i18n('message_true') + word.value + ' (' + word.ref + ')';
     Alert.alert('Bravo!!', message, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Suivant', style: 'ok', onPress: loadNewWord },
+      { text: this.i18n('cancel'), style: 'cancel' },
+      { text: this.i18n('next'), style: 'ok', onPress: loadNewWord },
     ]);
   };
 
@@ -147,7 +162,8 @@ class App extends Component {
   };
 
   onNotFound = (word) => {
-    const message = "Dommage :( , c'était " + word.value + ' dans: ' + word.ref;
+    const message =
+      this.i18n('message_notFound') + word.value + ' (' + word.ref + ')';
     this.setState({ message });
     this.setModalVisible(true);
   };
@@ -190,7 +206,7 @@ class App extends Component {
 
   handleModeListPress = () => {
     if (!this.state.allLevelsDone) {
-      Alert.alert('Oops!!', "Finissez d'abord tout les niveaux", [
+      Alert.alert('Oops!!', this.i18n('message_needToFinish'), [
         { text: 'Cancel', style: 'cancel' },
       ]);
     } else {
@@ -220,10 +236,12 @@ class App extends Component {
       group,
       disableWordManager,
       groupDone,
+      region,
     } = this.state;
     return (
       <View style={styles.container}>
         <AdventureListModal
+          region={region}
           visible={adventureListVisible}
           groupDone={groupDone}
           onItemPress={this.handleCategoryPress}
@@ -231,6 +249,7 @@ class App extends Component {
           reactivateMode={this.reactivateMode}
         ></AdventureListModal>
         <MenuModal
+          region={region}
           visible={menuVisible}
           onClose={this.handleMenuClose}
         ></MenuModal>
@@ -247,7 +266,7 @@ class App extends Component {
                 overlayContainerStyle={{ backgroundColor: '#549ca8' }}
               ></Avatar>
               <Text style={{ textAlign: 'right', color: '#fff' }}>
-                User name
+                {getI18n('greeting', region)}
               </Text>
             </View>
           }
@@ -265,10 +284,11 @@ class App extends Component {
         <View style={styles.header}></View>
         <View style={styles.levelPanel}>
           <Button
-            title="Choisir niveau/adventure"
+            title={this.i18n('label_mode')}
             onPress={this.handleModeListPress}
           ></Button>
           <GameMode
+            region={region}
             level={level}
             mode={group}
             progresion={listWordsFound.length}
@@ -280,6 +300,7 @@ class App extends Component {
             style={styles.wordManager}
             level={level}
             group={group}
+            region={region}
             disabled={disableWordManager}
             onFound={this.onFound}
             onNotFound={this.onNotFound}

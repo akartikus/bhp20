@@ -10,22 +10,27 @@ import {
 import { ListItem, Tooltip } from 'react-native-elements';
 import { getGroups } from '../services/dataService';
 import { Styles } from '../styles/styles';
+import { getI18n } from '../services/i18n';
 
 class AdventureListModal extends Component {
   state = {
     categories: getGroups(),
   };
 
+  i18n = (key) => {
+    return getI18n(key, this.props.region);
+  };
+
   onItemPress = (e) => {
     if (!this.props.groupDone.includes(e.id)) this.props.onItemPress(e);
     else
       Alert.alert(
-        'Mode fini',
-        'Vous avez déja fini ce mode, voullez vous le refaire',
+        this.i18n('label_modeDone'),
+        this.i18n('message_modeReplay'),
         [
-          { text: 'Non', style: 'cancel' },
+          { text: this.i18n('no'), style: 'cancel' },
           {
-            text: 'Oui',
+            text: this.i18n('ok'),
             style: 'ok',
             onPress: () => this.reactivateMode(e),
           },

@@ -10,10 +10,15 @@ import {
 import { Icon } from 'react-native-elements';
 import { Styles } from '../styles/styles';
 import { Separator } from './separator';
-import { Colors } from '../styles/color';
+import { getI18n } from '../services/i18n';
 
 class MenuModal extends Component {
   state = {};
+
+  i18n = (key) => {
+    return getI18n(key, this.props.region);
+  };
+
   render() {
     return (
       <Modal
@@ -24,7 +29,7 @@ class MenuModal extends Component {
         <View style={Styles.modalView}>
           <View style={Styles.modalHeader}>
             <Icon name="ios-settings" type="ionicon" color="#517fa4"></Icon>
-            <Text style={Styles.titleModal}> Parametres</Text>
+            <Text style={Styles.titleModal}>{this.i18n('menu_head')}</Text>
           </View>
           <View>
             <CheckBox></CheckBox>
@@ -49,7 +54,7 @@ class MenuModal extends Component {
             >
               <View style={{ flexDirection: 'row' }}>
                 <Icon name="ios-close" type="ionicon" color="white"></Icon>
-                <Text style={Styles.buttonText}>Fermer</Text>
+                <Text style={Styles.buttonText}>{this.i18n('close')}</Text>
               </View>
             </TouchableHighlight>
             <TouchableHighlight
@@ -58,7 +63,7 @@ class MenuModal extends Component {
             >
               <View style={{ flexDirection: 'row' }}>
                 <Icon name="ios-save" type="ionicon" color="white"></Icon>
-                <Text style={Styles.buttonText}>Enregistrer</Text>
+                <Text style={Styles.buttonText}>{this.i18n('save')}</Text>
               </View>
             </TouchableHighlight>
           </View>
