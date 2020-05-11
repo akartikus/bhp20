@@ -34,7 +34,7 @@ class App extends Component {
   };
 
   componentDidMount() {
-    storeData('region', 'fr');
+    //storeData('region', 'fr');
     this.initialize();
   }
 
@@ -226,6 +226,38 @@ class App extends Component {
     this.setState({ menuVisible: true });
   };
 
+  handleRegionChange = (e) => {
+    this.setState({ region: e });
+    storeData('region', e);
+  };
+
+  handleReset = (e) => {
+    Alert.alert(this.i18n('message_warning'), this.i18n('message_reset'), [
+      { text: this.i18n('ok'), style: 'ok', onPress: this.reset },
+      { text: this.i18n('no'), style: 'cancel' },
+    ]);
+  };
+
+  reset = () => {
+    this.setState({ score: 0 });
+    storeData('score', 0);
+
+    this.setState({ level: 1 });
+    storeData('level', 1);
+
+    this.setState({ group: 0 });
+    storeData('group', 0);
+
+    this.setState({ allLevelsDone: false });
+    storeData('allLevelsDone', false);
+
+    this.setState({ listWordsFound: [] });
+    storeData('listWordsFound', []);
+
+    this.setState({ groupDone: [] });
+    storeData('groupDone', []);
+  };
+
   render() {
     const {
       score,
@@ -252,6 +284,8 @@ class App extends Component {
           region={region}
           visible={menuVisible}
           onClose={this.handleMenuClose}
+          onRegionChange={this.handleRegionChange}
+          onReset={this.handleReset}
         ></MenuModal>
         <Header
           placement="left"

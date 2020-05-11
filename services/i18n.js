@@ -7,11 +7,17 @@ const translations = {
   next: { mg: 'Manaraka', fr: 'Suivant' },
   close: { mg: 'Akatona', fr: 'Fermer' },
   save: { mg: 'Raketina', fr: 'Enregistrer' },
+  reset: { mg: 'Averina', fr: 'Réinitialiser' },
   mode_label: { mg: 'Lalao', fr: 'Mode' },
   mode_level: { mg: 'Ambaratonga', fr: 'Niveau' },
   mode_wordsFound: { mg: 'Teny hita', fr: 'Mots trouvés' },
   menu_head: { mg: 'Kojakoja', fr: 'Parametres' },
   message_true: { mg: 'Hitanao ilay teny', fr: "C'était bien" },
+  message_warning: { mg: 'Tandremo', fr: 'Attention' },
+  message_reset: {
+    mg: 'Tena tianao ho fafana ve ny Fivoaranao?',
+    fr: 'Voullez-vous vraiment réinitialiser votre progression?',
+  },
   message_notFound: {
     mg: 'Indrisy :( inty ilay teny : ',
     fr: "Dommage :( c'était : ",

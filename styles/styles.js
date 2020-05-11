@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { Colors } from './color';
+import { withTheme } from 'react-native-elements';
 
 export const Styles = StyleSheet.create({
   //Modal styles
@@ -71,5 +72,24 @@ export const Styles = StyleSheet.create({
     backgroundColor: Colors.backgroundDisableColor,
     flex: 1,
     justifyContent: 'space-around',
+  },
+
+  flagEnable: {
+    margin: 5,
+    borderColor: Colors.textColor1,
+    borderRadius: 5,
+    borderWidth: 2,
+  },
+  flagDisable: {
+    margin: 5,
+    borderColor: 'white',
+    borderRadius: 5,
+    borderWidth: 2,
+    opacity: 0.5,
+  },
+
+  regionContent: {
+    justifyContent: 'space-around',
+    flexDirection: 'row',
   },
 });
