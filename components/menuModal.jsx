@@ -6,6 +6,7 @@ import {
   View,
   TouchableOpacity,
   Button,
+  Linking,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Styles } from '../styles/styles';
@@ -53,21 +54,38 @@ class MenuModal extends Component {
               <Image source={require('../img/france-flag-icon-64.png')}></Image>
             </TouchableOpacity>
           </View>
-          <Separator></Separator>
-          <Button
-            title={this.i18n('reset')}
-            onPress={this.props.onReset}
-          ></Button>
+
           <Separator></Separator>
           <View>
             <Text>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book.
+              Etape 1 : Finissez les deux premiers niveaux pour acceder aux
+              autre mode de jeux
             </Text>
+            <Text>Etape 2 : Amusez vous dans les mode de jeu thematique.</Text>
+            <Text>
+              Etape 3 : Vous pouvez reinitialiser le jeu si vous souhaitez. Les
+              mots cachés sont choisi aléatoirement.
+            </Text>
+            <Button
+              title={this.i18n('reset')}
+              onPress={this.props.onReset}
+            ></Button>
           </View>
+
           <Separator></Separator>
+          <Text>
+            Pour toutes suggestions ou repport de bug :) Vous pouvez m'envoyer
+            un petit mail.
+          </Text>
+          <TouchableHighlight
+            onPress={() =>
+              Linking.openURL(
+                'mailto:sitraka.razafimamy@gmail.com?subject=bhp20'
+              )
+            }
+          >
+            <Text>Envoyer un mail</Text>
+          </TouchableHighlight>
           <View style={Styles.modalFooter}>
             <TouchableHighlight
               style={Styles.warningButton}

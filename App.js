@@ -10,6 +10,7 @@ import Score from './components/score';
 import GameMode from './components/gameMode';
 import { retrieveData, storeData } from './services/asyncStorageServices';
 import { getI18n } from './services/i18n';
+import MessageModal from './components/messageModal';
 
 const WORDS_PER_LEVEL = 2;
 const MAX_LEVEL = 2;
@@ -31,10 +32,11 @@ class App extends Component {
     groupDone: [],
     //User preferences
     region: 'fr',
+    userName: 'user',
   };
 
   componentDidMount() {
-    //storeData('region', 'fr');
+    //storeData('userName', '');
     this.initialize();
   }
 
@@ -50,8 +52,8 @@ class App extends Component {
     this.initializeState('message');
     this.initializeState('numWordsFound');
     this.initializeState('groupDone');
-
     this.initializeState('region');
+    this.initializeState('userName');
   };
 
   initializeState = (key) => {
@@ -258,6 +260,19 @@ class App extends Component {
     storeData('groupDone', []);
   };
 
+  displayMessageModal = () => {
+    if (!this.state.userName) {
+      return (
+        <MessageModal
+          onOk={(e) => {
+            this.setState({ userName: e });
+            storeData('userName', e);
+          }}
+        ></MessageModal>
+      );
+    }
+  };
+
   render() {
     const {
       score,
@@ -269,9 +284,11 @@ class App extends Component {
       disableWordManager,
       groupDone,
       region,
+      userName,
     } = this.state;
     return (
       <View style={styles.container}>
+        {this.displayMessageModal()}
         <AdventureListModal
           region={region}
           visible={adventureListVisible}
@@ -300,7 +317,7 @@ class App extends Component {
                 overlayContainerStyle={{ backgroundColor: '#549ca8' }}
               ></Avatar>
               <Text style={{ textAlign: 'right', color: '#fff' }}>
-                {getI18n('greeting', region)}
+                {userName}
               </Text>
             </View>
           }
@@ -314,7 +331,6 @@ class App extends Component {
             ></Icon>
           }
         />
-
         <View style={styles.header}></View>
         <View style={styles.levelPanel}>
           <Button
