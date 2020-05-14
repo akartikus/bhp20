@@ -50,7 +50,7 @@ class MessageModal extends Component {
                 borderColor: Colors.textColor1,
                 borderRadius: 5,
                 borderWidth: 1,
-                size: 15,
+                fontSize: 15,
               }}
               onChangeText={(text) => this.handleUserNameChange(text)}
               value={this.state.uername}

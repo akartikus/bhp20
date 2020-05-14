@@ -4,12 +4,12 @@ import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 const getStyle = (color) => {
   return StyleSheet.create({
     button: {
-      height: 30,
-      width: 30,
-      margin: 5,
-      padding: 2,
+      width: '12%',
+      height: '15%',
+      margin: 4,
       borderRadius: 5,
       alignItems: 'center',
+      justifyContent: 'center',
       backgroundColor: color,
       borderColor: '#1a4d27',
       borderWidth: 1,
@@ -19,11 +19,11 @@ const getStyle = (color) => {
 
 const LetterButton = ({ letter, onPress, deactivate }) => {
   let handler = () => onPress();
-  let color = '#b7efcd';
+  let color = '#f0f6fa';
 
   if (deactivate) {
     handler = () => {};
-    color = '#c7d1c9';
+    color = '#aaafb3';
   }
 
   return (

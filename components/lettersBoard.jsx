@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Button, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import LetterButton from './letterButton';
 
 const LettersBoard = ({ letters, onPress, active }) => {
@@ -24,7 +24,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
+    alignContent: 'center',
     backgroundColor: '#ccdede',
+    backgroundColor: 'white',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    elevation: 5,
   },
 });
 

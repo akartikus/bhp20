@@ -7,6 +7,7 @@ import { wordToMap, NUM_TRY, ALPHABET, isWordFound } from '../utils/wordUtils';
 import LettersBoard from './lettersBoard';
 import { Icon, Rating } from 'react-native-elements';
 import { Styles } from '../styles/styles';
+import { Colors } from '../styles/color';
 
 class WordManager extends Component {
   state = {
@@ -121,38 +122,29 @@ class WordManager extends Component {
       );
     return (
       <View style={styles.container}>
-        <View style={styles.lifeView}>
-          <Rating
-            type="heart"
-            ratingColor="blue"
-            ratingCount={NUM_TRY}
-            startingValue={leftTry}
-            imageSize={30}
-            readonly
-            style={{ alignSelf: 'center' }}
-          />
-        </View>
         <View style={styles.indicationView}>
-          <ImageBackground
-            source={require('../img/notebook.png')}
-            resizeMode={'stretch'}
-            style={styles.image}
-          >
-            <Icon
-              name="light-bulb"
-              type="octicon"
-              color="#517fa4"
-              onPress={() => this.setState({ isNewWord: true })}
-            ></Icon>
+          <View style={{ flex: 1 }}>
+            <Rating
+              type="heart"
+              ratingColor="black"
+              ratingCount={NUM_TRY}
+              startingValue={leftTry}
+              imageSize={30}
+              readonly
+            />
+          </View>
+
+          <View style={{ flex: 2, justifyContent: 'center' }}>
             <Text
               style={{
                 textAlign: 'center',
-                color: '#517fa4',
+                fontStyle: 'italic',
+                color: Colors.textColor1,
               }}
             >
-              {hiddenWord != null && hiddenWord.indication}
+              {hiddenWord != null && '"' + hiddenWord.indication + '"'}
             </Text>
-          </ImageBackground>
+          </View>
         </View>
         <HiddenWord word={word}></HiddenWord>
         <LettersBoard
@@ -171,20 +163,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-around',
+    alignItems: 'stretch',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    marginBottom: '5%',
   },
-
   lifeView: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     padding: 5,
   },
-  image: {
-    flex: 1,
-    resizeMode: 'cover',
-    justifyContent: 'center',
-  },
   indicationView: {
-    flex: 2,
-    marginHorizontal: 20,
+    flex: 3,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignContent: 'center',
+    elevation: 5,
   },
 });

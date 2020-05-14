@@ -23,8 +23,10 @@ const translations = {
     fr: "Dommage :( c'était : ",
   },
   message_needToFinish: {
-    mg: 'Farano aloha ny ambaratonga rehetra ',
-    fr: "Finissez d'abord tout les niveaux",
+    mg:
+      'Mbola tsy azonao atao ny lalao hafa. Farano aloha ny ambaratonga rehetra.',
+    fr:
+      "Les autres modes ne sont pas encore disponible. Finissez d'abord tout les niveaux.",
   },
   message_levelDone: {
     mg: 'Vitanao ny ambaratonga rehetra, misafidiana lalao hafa',

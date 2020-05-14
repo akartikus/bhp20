@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, Animated } from 'react-native';
 import _ from 'lodash';
 import WordManager from './components/wordManager';
 import { Avatar, Header, Icon } from 'react-native-elements';
@@ -34,10 +34,25 @@ class App extends Component {
     region: 'fr',
     userName: 'user',
   };
+  constructor() {
+    super();
+    this.animation = new Animated.Value(0);
+  }
+
+  startBackgroundColorAnimation = () => {
+    this.animation.setValue(0);
+    Animated.timing(this.animation, {
+      toValue: 1,
+      duration: 10000,
+    }).start(() => {
+      this.startBackgroundColorAnimation();
+    });
+  };
 
   componentDidMount() {
-    //storeData('userName', '');
+    storeData('region', 'fr');
     this.initialize();
+    this.startBackgroundColorAnimation();
   }
 
   i18n = (key) => {
@@ -59,9 +74,11 @@ class App extends Component {
   initializeState = (key) => {
     retrieveData(key)
       .then((res) => {
-        const state = { ...this.state };
-        state[key] = res;
-        this.setState(state);
+        if (res !== undefined) {
+          const state = { ...this.state };
+          state[key] = res;
+          this.setState(state);
+        }
       })
       .catch((error) => {
         console.log('Promise is rejected with error: ' + error);
@@ -261,7 +278,7 @@ class App extends Component {
   };
 
   displayMessageModal = () => {
-    if (!this.state.userName) {
+    if (this.state.userName === 'user') {
       return (
         <MessageModal
           onOk={(e) => {
@@ -273,39 +290,64 @@ class App extends Component {
     }
   };
 
+  displayAdventureListModal = () => {
+    const { region, adventureListVisible, groupDone } = this.state;
+    return (
+      <AdventureListModal
+        region={region}
+        visible={adventureListVisible}
+        groupDone={groupDone}
+        onItemPress={this.handleCategoryPress}
+        onCancel={this.handleCancel}
+        reactivateMode={this.reactivateMode}
+      ></AdventureListModal>
+    );
+  };
+
+  displayMenuModal = () => {
+    const { region, menuVisible } = this.state;
+    return (
+      <MenuModal
+        region={region}
+        visible={menuVisible}
+        onClose={this.handleMenuClose}
+        onRegionChange={this.handleRegionChange}
+        onReset={this.handleReset}
+      ></MenuModal>
+    );
+  };
+
   render() {
     const {
       score,
       level,
-      adventureListVisible,
-      menuVisible,
       listWordsFound,
       group,
       disableWordManager,
-      groupDone,
       region,
       userName,
     } = this.state;
+
+    const backgroundColorConfig = this.animation.interpolate({
+      inputRange: [0, 0.2, 0.4, 0.6, 0.8, 1],
+      outputRange: [
+        Colors.backgroundColor,
+        Colors.backgroundColor4,
+        Colors.backgroundColor2,
+        Colors.backgroundColor1,
+        Colors.backgroundColor5,
+        Colors.backgroundColor,
+      ],
+    });
+
     return (
-      <View style={styles.container}>
-        {this.displayMessageModal()}
-        <AdventureListModal
-          region={region}
-          visible={adventureListVisible}
-          groupDone={groupDone}
-          onItemPress={this.handleCategoryPress}
-          onCancel={this.handleCancel}
-          reactivateMode={this.reactivateMode}
-        ></AdventureListModal>
-        <MenuModal
-          region={region}
-          visible={menuVisible}
-          onClose={this.handleMenuClose}
-          onRegionChange={this.handleRegionChange}
-          onReset={this.handleReset}
-        ></MenuModal>
+      <Animated.View
+        style={[styles.container, { backgroundColor: backgroundColorConfig }]}
+      >
+        {/* {this.displayMessageModal()}
+        {this.displayAdventureListModal()}
+        {this.displayMenuModal()} */}
         <Header
-          placement="left"
           leftComponent={
             <View style={styles.userView}>
               <Avatar
@@ -316,8 +358,8 @@ class App extends Component {
                 }}
                 overlayContainerStyle={{ backgroundColor: '#549ca8' }}
               ></Avatar>
-              <Text style={{ textAlign: 'right', color: '#fff' }}>
-                {userName}
+              <Text style={{ textAlign: 'right', color: '#fff', fontSize: 20 }}>
+                {' ' + userName}
               </Text>
             </View>
           }
@@ -331,23 +373,18 @@ class App extends Component {
             ></Icon>
           }
         />
-        <View style={styles.header}></View>
         <View style={styles.levelPanel}>
-          <Button
-            title={this.i18n('label_mode')}
-            onPress={this.handleModeListPress}
-          ></Button>
           <GameMode
             region={region}
             level={level}
             mode={group}
             progresion={listWordsFound.length}
             goal={WORDS_PER_LEVEL}
+            onModePress={this.handleModeListPress}
           ></GameMode>
         </View>
         <View style={styles.wordManager}>
           <WordManager
-            style={styles.wordManager}
             level={level}
             group={group}
             region={region}
@@ -359,7 +396,7 @@ class App extends Component {
         <View style={styles.footer}>
           <Text>Copyright 2020 - POC Version</Text>
         </View>
-      </View>
+      </Animated.View>
     );
   }
 }
@@ -371,11 +408,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.backgroundColor,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: Colors.headerColor,
-  },
+
   userView: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -386,17 +419,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     backgroundColor: Colors.footerColor,
   },
-  //Todo: Need refactor
+
   levelPanel: {
     flex: 2,
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderColor: '#000',
-    borderBottomWidth: 1,
+    backgroundColor: 'white',
+    alignContent: 'stretch',
+    justifyContent: 'center',
+    marginHorizontal: '5%',
+    marginTop: '2%',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    elevation: 5,
   },
   wordManager: {
     flex: 6,
+    marginHorizontal: '5%',
+    elevation: 5,
   },
 });
