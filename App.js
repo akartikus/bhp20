@@ -50,7 +50,6 @@ class App extends Component {
   };
 
   componentDidMount() {
-    storeData('region', 'fr');
     this.initialize();
     this.startBackgroundColorAnimation();
   }
@@ -180,11 +179,13 @@ class App extends Component {
     storeData('score', score);
   };
 
-  onNotFound = (word) => {
+  onNotFound = (word, loadNewWord) => {
     const message =
       this.i18n('message_notFound') + word.value + ' (' + word.ref + ')';
-    this.setState({ message });
-    this.setModalVisible(true);
+    Alert.alert('Oops!!', message, [
+      { text: this.i18n('cancel'), style: 'cancel' },
+      { text: this.i18n('next'), style: 'ok', onPress: loadNewWord },
+    ]);
   };
 
   nextWord = () => {
@@ -219,6 +220,8 @@ class App extends Component {
 
   reactivateMode = (mode) => {
     const groupDone = [...this.state.groupDone].filter((e) => e != mode.id);
+    this.setState({ group: mode.id });
+    storeData('group', mode.id);
     this.setState({ groupDone });
     storeData('groupDone', groupDone);
   };
@@ -275,6 +278,8 @@ class App extends Component {
 
     this.setState({ groupDone: [] });
     storeData('groupDone', []);
+
+    this.setState({ disableWordManager: false });
   };
 
   displayMessageModal = () => {
@@ -344,9 +349,9 @@ class App extends Component {
       <Animated.View
         style={[styles.container, { backgroundColor: backgroundColorConfig }]}
       >
-        {/* {this.displayMessageModal()}
+        {this.displayMessageModal()}
         {this.displayAdventureListModal()}
-        {this.displayMenuModal()} */}
+        {this.displayMenuModal()}
         <Header
           leftComponent={
             <View style={styles.userView}>

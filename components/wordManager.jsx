@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import HiddenWord from './hiddenWord';
-import { View, Text, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import { getWords } from '../services/dataService';
 import { wordToMap, NUM_TRY, ALPHABET, isWordFound } from '../utils/wordUtils';
 import LettersBoard from './lettersBoard';
@@ -92,7 +92,9 @@ class WordManager extends Component {
       left = left - 1;
       this.setState({ leftTry: left });
       if (left === 0) {
-        this.props.onNotFound(updatedHiddenWord.hiddenWord);
+        this.props.onNotFound(updatedHiddenWord.hiddenWord, () =>
+          this.setState({ isNewWord: true })
+        );
         this.setState({ activateLettersBoard: false });
         this.setState({ diseableRefresh: false });
       }
@@ -112,12 +114,20 @@ class WordManager extends Component {
 
   render() {
     const word = this.getWord();
-    //const notebook = ;
     const { hiddenWord, letters, leftTry, activateLettersBoard } = this.state;
+    const { height, width } = Dimensions.get('window');
     if (this.props.disabled)
       return (
         <View style={Styles.disableView}>
-          <Text>⚠️</Text>
+          <Image
+            style={{
+              alignItems: 'center',
+              backgroundColor: 'black',
+              width: 250,
+              height: 250,
+            }}
+            source={require('../img/fire.gif')}
+          />
         </View>
       );
     return (

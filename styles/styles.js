@@ -69,9 +69,14 @@ export const Styles = StyleSheet.create({
   },
 
   disableView: {
-    backgroundColor: Colors.backgroundDisableColor,
+    backgroundColor: 'black',
     flex: 1,
     justifyContent: 'space-around',
+    alignItems: 'center',
+    marginHorizontal: '1%',
+    marginBottom: '3%',
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 20,
   },
 
   flagEnable: {

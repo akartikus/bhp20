@@ -56,6 +56,7 @@ const Score = ({ score }) => {
           fontSize: 30,
           color: '#fff',
           fontWeight: 'bold',
+          paddinHorizontal: 10,
         }}
       >
         {score}
